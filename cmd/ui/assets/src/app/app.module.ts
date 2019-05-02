@@ -17,6 +17,7 @@ import {
   MatDialogModule,
   MatDividerModule,
   MatExpansionModule,
+  MatFormFieldModule,
   MatGridListModule,
   MatIconModule,
   MatInputModule,
@@ -46,6 +47,7 @@ import { AppRoutingModule }                                        from './app-r
 import { AceEditorModule }                                         from 'ng2-ace-editor';
 import { ChartsModule }                                            from 'ng2-charts';
 import { NgxPaginationModule }                                     from 'ngx-pagination';
+import { NgxMatSelectSearchModule }                                from 'ngx-mat-select-search';
 import { TitleCasePipe }                                           from '@angular/common';
 import { CommonModule }                                            from '@angular/common';
 
@@ -185,6 +187,7 @@ import { ImportClusterComponent } from './clusters/import-cluster/import-cluster
     MatDialogModule,
     MatDividerModule,
     MatExpansionModule,
+    MatFormFieldModule,
     MatGridListModule,
     MatIconModule,
     MatInputModule,
@@ -217,6 +220,7 @@ import { ImportClusterComponent } from './clusters/import-cluster/import-cluster
     SchemaFormModule,
     ChartsModule,
     NgxPaginationModule,
+    NgxMatSelectSearchModule,
     AceEditorModule,
     BrowserModule, MaterialDesignFrameworkModule,
     NgxDatatableModule,

@@ -134,18 +134,18 @@
           <mat-form-field [ngClass]="{ 'regionsLoading': regionsLoading }">
             <mat-select placeholder="Select a Region"
                         formControlName="region"
-                        (openedChange)="regionsFilter = ''"
                         (selectionChange)="selectRegion($event.value)"
+                        #singleSelect
                         required>
-              <input class="select-filter"
-                     matInput
-                     type="text"
-                     placeholder="Filter regions..."
-                     [(ngModel)]="regionsFilter"
-                     [ngModelOptions]="{ standalone: true }"
-                     autofocus>
-              <mat-option *ngFor="let r of availableRegions?.regions | callback: regionsFilterCallback"
-                          [value]="r">{{ r.name }}</mat-option>
+              <mat-option>
+                <ngx-mat-select-search type="text"
+                                       placeholderLabel="Filter regions..."
+                                       noEntriesFoundLabel="No matching regions found"
+                                       [(ngModel)]="regionsFilter"
+                                       [ngModelOptions]="{ standalone: true }"></ngx-mat-select-search>
+              </mat-option>
+                <mat-option *ngFor="let r of availableRegions?.regions | callback: regionsFilterCallback"
+                            [value]="r">{{ r.name }}</mat-option>
             </mat-select>
           </mat-form-field>
         </form>
@@ -159,16 +159,16 @@
             <mat-form-field [ngClass]="{ 'regionsLoading': regionsLoading }">
               <mat-select placeholder="Select a Region"
                           formControlName="region"
-                          (openedChange)="regionsFilter = ''"
                           (selectionChange)="selectRegion($event.value)"
+                          #singleSelect
                           required>
-                <input class="select-filter"
-                       matInput
-                       type="text"
-                       placeholder="Filter regions..."
-                       [(ngModel)]="regionsFilter"
-                       [ngModelOptions]="{ standalone: true }"
-                       autofocus>
+                <mat-option>
+                  <ngx-mat-select-search type="text"
+                                         placeholderLabel="Filter regions..."
+                                         noEntriesFoundLabel="No matching regions found"
+                                         [(ngModel)]="regionsFilter"
+                                         [ngModelOptions]="{ standalone: true }"></ngx-mat-select-search>
+                </mat-option>
                 <mat-option *ngFor="let r of availableRegions?.regions | callback: regionsFilterCallback"
                             [value]="r">{{ r.name }}</mat-option>
               </mat-select>
@@ -211,16 +211,16 @@
             <mat-form-field [ngClass]="{ 'regionsLoading': regionsLoading }">
               <mat-select placeholder="Select a Region"
                           formControlName="region"
-                          (openedChange)="regionsFilter = ''"
                           (selectionChange)="selectRegion($event.value)"
+                          #singleSelect
                           required>
-                <input class="select-filter"
-                       matInput
-                       type="text"
-                       placeholder="Filter regions..."
-                       [(ngModel)]="regionsFilter"
-                       [ngModelOptions]="{ standalone: true }"
-                       autofocus>
+                <mat-option>
+                  <ngx-mat-select-search type="text"
+                                         placeholderLabel="Filter regions..."
+                                         noEntriesFoundLabel="No matching regions found"
+                                         [(ngModel)]="regionsFilter"
+                                         [ngModelOptions]="{ standalone: true }"></ngx-mat-select-search>
+                </mat-option>
                 <mat-option *ngFor="let r of availableRegions?.regions | callback: regionsFilterCallback"
                             [value]="r">{{ r.name }}</mat-option>
               </mat-select>
@@ -254,16 +254,16 @@
             <mat-form-field [ngClass]="{ 'regionsLoading': regionsLoading }">
               <mat-select placeholder="Select a Region"
                           formControlName="region"
-                          (openedChange)="regionsFilter = ''"
                           (selectionChange)="selectRegion($event.value)"
+                          #singleSelect
                           required>
-                <input class="select-filter"
-                       matInput
-                       type="text"
-                       placeholder="Filter regions..."
-                       [(ngModel)]="regionsFilter"
-                       [ngModelOptions]="{ standalone: true }"
-                       autofocus>
+                <mat-option>
+                  <ngx-mat-select-search type="text"
+                                         placeholderLabel="Filter regions..."
+                                         noEntriesFoundLabel="No matching regions found"
+                                         [(ngModel)]="regionsFilter"
+                                         [ngModelOptions]="{ standalone: true }"></ngx-mat-select-search>
+                </mat-option>
                 <mat-option *ngFor="let r of availableRegions?.regions | callback: regionsFilterCallback"
                             [value]="r">{{ r.name }}</mat-option>
               </mat-select>
