@@ -22,10 +22,11 @@ HOSTNAME="$(hostname -f)"
 # TODO: place ca/kubeblet certificates to the custom dir to make this step idempotent.
 #       `kubeadm reset` removes this certificates and then creates a new one.
 
-{{if .IsMaster }}
 
-{{ if .IsBootstrap }}
 sudo mkdir -p /etc/supergiant
+
+{{if .IsMaster }}
+{{ if .IsBootstrap }}
 
 sudo bash -c "cat << EOF > /etc/supergiant/kubeadm.conf
 ---
@@ -36,6 +37,8 @@ localAPIEndpoint:
   bindPort: 443
 nodeRegistration:
   kubeletExtraArgs:
+    address: {{ .PrivateIP }}
+    node-ip: {{ .PrivateIP }}
     {{ if .Provider }}cloud-provider: {{ .Provider }}{{ end }}
 ---
 apiVersion: kubeadm.k8s.io/v1beta1
@@ -50,6 +53,7 @@ apiServer:
   - {{ .InternalDNSName }}
   extraArgs:
     authorization-mode: Node,RBAC
+    bind-address: {{ .PrivateIP }}
     {{ if .Provider }}cloud-provider: {{ .Provider }}{{ end }}
   timeoutForControlPlane: 8m0s
 controllerManager:
@@ -71,17 +75,84 @@ sudo kubeadm init --ignore-preflight-errors=NumCPU \
 --config=/etc/supergiant/kubeadm.conf
 {{ else }}
 
+sudo bash -c "cat << EOF > /etc/supergiant/kubeadm.conf
+apiVersion: kubeadm.k8s.io/v1beta1
+kind: JoinConfiguration
+nodeRegistration:
+  kubeletExtraArgs:
+    node-ip: {{ .PrivateIP }}
+    address: {{ .PrivateIP }}
+    {{ if .Provider }}cloud-provider: {{ .Provider }}{{ end }}
+discovery:
+  bootstrapToken:
+    token: {{ .Token }}
+    apiServerEndpoint: {{ .InternalDNSName }}:443
+    unsafeSkipCAVerification: true
+controlPlane:
+  localAPIEndpoint:
+    advertiseAddress: {{ .AdvertiseAddress }}
+    bindPort: 443
+---
+apiVersion: kubeadm.k8s.io/v1beta1
+kind: ClusterConfiguration
+kubernetesVersion: v{{ .K8SVersion }}
+clusterName: kubernetes
+controlPlaneEndpoint: {{ .InternalDNSName }}
+certificatesDir: /etc/kubernetes/pki
+apiServer:
+  certSANs:
+  - {{ .ExternalDNSName }}
+  - {{ .InternalDNSName }}
+  extraArgs:
+    authorization-mode: Node,RBAC
+    bind-address: {{ .PrivateIP }}
+    {{ if .Provider }}cloud-provider: {{ .Provider }}{{ end }}
+  timeoutForControlPlane: 8m0s
+controllerManager:
+  extraArgs:
+  bind-address: {{ .PrivateIP }}
+  {{ if .Provider }}cloud-provider: {{ .Provider }}{{ end }}
+scheduler:
+  extraArgs:
+    bind-address: {{ .PrivateIP }}
+dns:
+  type: CoreDNS
+etcd:
+  local:
+    dataDir: /var/lib/etcd
+networking:
+  dnsDomain: cluster.local
+  podSubnet: {{ .CIDR }}
+  serviceSubnet: {{ .ServiceCIDR }}
+EOF"
+
 sudo kubeadm config images pull
-sudo kubeadm join --ignore-preflight-errors=NumCPU {{ .InternalDNSName }}:443 --token {{ .Token }} \
+sudo kubeadm join --ignore-preflight-errors=NumCPU {{ .InternalDNSName }}:443 \
 --node-name ${HOSTNAME} \
---discovery-token-unsafe-skip-ca-verification --experimental-control-plane
+--config=/etc/supergiant/kubeadm.conf
 {{ end }}
 
 sudo mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 {{ else }}
-sudo kubeadm join --ignore-preflight-errors=NumCPU {{ .InternalDNSName }}:443 --token {{ .Token }} \
+
+sudo bash -c "cat << EOF > /etc/supergiant/kubeadm.conf
+apiVersion: kubeadm.k8s.io/v1beta1
+kind: JoinConfiguration
+nodeRegistration:
+  kubeletExtraArgs:
+    address: {{ .PrivateIP }}
+    node-ip: {{ .PrivateIP }}
+    {{ if .Provider }}cloud-provider: {{ .Provider }}{{ end }}
+discovery:
+  bootstrapToken:
+    token: {{ .Token }}
+    apiServerEndpoint: {{ .InternalDNSName }}:443
+    unsafeSkipCAVerification: true
+EOF"
+
+sudo kubeadm join --ignore-preflight-errors=NumCPU {{ .InternalDNSName }}:443 \
 --node-name ${HOSTNAME} \
---discovery-token-unsafe-skip-ca-verification
+--config=/etc/supergiant/kubeadm.conf
 {{ end }}
